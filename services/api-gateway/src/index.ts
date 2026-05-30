@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.get('/health', (_, res) => {
-  console.log(`health check`);
+  console.log(`health check 2`);
 
   res.status(200).send('OK');
 });
