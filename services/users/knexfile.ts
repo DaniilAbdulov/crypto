@@ -22,10 +22,21 @@ const base = {
 const config: {[key: string]: Knex.Config} = {
   development: base,
   production: base,
+  tests: {
+    ...base,
+    connection: {
+      database: 'usersForTests',
+      user: 'postgres',
+      password: '0896',
+    },
+  },
 };
 
 const activeConfig =
   process.env.NODE_ENV === 'development'
     ? config.development
-    : config.production;
+    : process.env.NODE_ENV === 'test'
+      ? config.tests
+      : config.production;
+
 export default activeConfig;

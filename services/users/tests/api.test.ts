@@ -1,6 +1,9 @@
 import request from 'supertest';
 import {createApp} from '../src/app';
-import {db} from '../src/db/knex';
+import {createDb} from '../../../packages/pg/src/knex';
+import activeConfig from '../knexfile';
+
+const db = createDb(activeConfig);
 
 describe('GET /users/:userId', () => {
   const app = createApp();
