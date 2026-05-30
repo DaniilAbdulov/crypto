@@ -1,0 +1,10 @@
+{
+  "extends": "../../packages/ts/tsconfig.json",
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist"
+  },
+  "references": [{"path": "../../packages/pg"}]
+}
