@@ -10,9 +10,8 @@ export function validate(schema: ZodType) {
     });
 
     if (!result.success) {
-      console.log(`result`, result);
       return res.status(400).json({
-        error: result.error.flatten(),
+        error: result.error,
       });
     }
 
