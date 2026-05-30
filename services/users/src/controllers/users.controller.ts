@@ -13,3 +13,9 @@ export async function getUser(req: Request, res: Response) {
     res.status(500).json({message});
   }
 }
+
+export const createUser = async (req: Request, res: Response) => {
+  const user = await usersService.create(req.body);
+
+  res.json(user);
+};
