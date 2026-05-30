@@ -1,5 +1,5 @@
 import {db} from '../db/knex';
 
-export const findById = async (id: string) => {
-  return db('users').where('id', id).first();
+export const findById = async (uuid: string) => {
+  return db('users').where('uuid', uuid).first();
 };

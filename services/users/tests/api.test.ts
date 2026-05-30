@@ -6,10 +6,7 @@ describe('GET /users/:userId', () => {
   const app = createApp();
 
   beforeAll(async () => {
-    await db('users').insert({
-      id: '123',
-      name: 'John',
-    });
+    await db('users').insert({name: 'John', password_hash: 'hash'});
   });
 
   afterAll(async () => {
@@ -17,14 +14,17 @@ describe('GET /users/:userId', () => {
   });
 
   test('should return user by id', async () => {
-    const res = await request(app).get('/users/123');
+    const newUser = await db('users').first();
 
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      id: 123,
-      name: 'John',
-      created_at: null,
-      updated_at: null,
-    });
+    expect(newUser.uuid).toBeDefined();
+    expect(newUser.name).toBe('John');
+
+    const {body} = await request(app).get(`/users/${newUser.uuid}`);
+    const {uuid, password_hash, name, created_at} = body;
+
+    expect(uuid).toBe(newUser.uuid);
+    expect(password_hash).toBe('hash');
+    expect(name).toBe('John');
+    expect(created_at).toBeDefined();
   });
 });
