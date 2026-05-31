@@ -6,7 +6,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "rm -rf dist && tsc",
     "start": "node dist/src/server.js",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
