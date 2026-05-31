@@ -1,20 +1,21 @@
 import * as usersRepository from '../repositories/users.repository';
-import {User} from '../../../../packages/ts/types/users';
+import {Deps, User} from '../types';
 
-export async function getUserById(id: string) {
-  const user = await usersRepository.findById(id);
+export const createUserService = (deps: Deps) => {
+  return {
+    createUser: async (body: Pick<User, 'name' | 'password_hash'>) => {
+      const {uuid, name} = await usersRepository.create(body, deps);
 
-  if (!user) {
-    throw new Error('User not found');
-  }
+      return {uuid, name};
+    },
+    getUser: async (userId: User['uuid']) => {
+      const user = await usersRepository.get(userId, deps);
 
-  return user;
-}
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-export const create = async (
-  body: Pick<User, 'name' | 'password_hash'>,
-): Promise<Pick<User, 'uuid' | 'name'>> => {
-  const [{uuid, name}] = await usersRepository.create(body);
-
-  return {uuid, name};
+      return user;
+    },
+  };
 };

@@ -1,30 +1,30 @@
+import knex from 'knex';
 import request from 'supertest';
 import {createApp} from '../src/app';
-import {createDb} from '../../../packages/pg/src/knex';
-import activeConfig from '../knexfile';
 import {randomUUID} from 'crypto';
+import {pg} from '../src/db/knex';
 
-const db = createDb(activeConfig);
-
-describe('GET /users/:userId', () => {
-  const app = createApp();
+describe('usersTests', () => {
+  const app = createApp({
+    pg,
+    redis: {},
+    kafka: {},
+  });
 
   afterAll(async () => {
-    await db('users').truncate();
+    await pg('users').truncate();
   });
 
   test('should return user by id', async () => {
-    const [{uuid: newUserUuid}] = await db('users')
+    const [{uuid: newUserUuid}] = await pg('users')
       .insert({name: 'John', password_hash: 'hash'})
       .returning('uuid');
 
     const {body} = await request(app).get(`/users/${newUserUuid}`);
-    const {uuid, password_hash, name, created_at} = body;
+    const {uuid, name} = body;
 
     expect(uuid).toBe(newUserUuid);
-    expect(password_hash).toBe('hash');
     expect(name).toBe('John');
-    expect(created_at).toBeDefined();
   });
 
   test('User not found', async () => {

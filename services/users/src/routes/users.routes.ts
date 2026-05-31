@@ -1,11 +1,16 @@
 import {Router} from 'express';
-
-import * as usersController from '../controllers/users.controller';
-
 import {validate} from '../middleware/validate';
 import {CreateUserSchema, GetUserSchema} from '../validators/users.validator';
+import {createUserController} from '../controllers/users.controller';
+import {Deps} from '../types';
 
-export const usersRouter = Router();
+export const createUserRouter = (deps: Deps) => {
+  const router = Router();
 
-usersRouter.get('/:userId', validate(GetUserSchema), usersController.getUser);
-usersRouter.post('/', validate(CreateUserSchema), usersController.createUser);
+  const controller = createUserController(deps);
+
+  router.get('/:userId', validate(GetUserSchema), controller.getUser);
+  router.post('/', validate(CreateUserSchema), controller.createUser);
+
+  return router;
+};

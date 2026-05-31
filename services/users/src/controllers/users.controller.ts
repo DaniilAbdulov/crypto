@@ -1,21 +1,28 @@
-import {Request, Response} from 'express';
+import {Request, Response, NextFunction} from 'express';
+import {createUserService} from '../services/users.service';
+import {Deps} from '../types';
 
-import * as usersService from '../services/users.service';
+export const createUserController = (deps: Deps) => {
+  const service = createUserService(deps);
 
-export async function getUser(req: Request, res: Response) {
-  try {
-    const user = await usersService.getUserById(req.params.userId);
+  return {
+    createUser: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await service.createUser(req.body);
 
-    res.json(user);
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+        return res.json(result);
+      } catch (err) {
+        next(err);
+      }
+    },
+    getUser: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await service.getUser(req.params.userId);
 
-    res.status(500).json({message});
-  }
-}
-
-export const createUser = async (req: Request, res: Response) => {
-  const user = await usersService.create(req.body);
-
-  res.json(user);
+        return res.json(result);
+      } catch (error) {
+        next(error);
+      }
+    },
+  };
 };

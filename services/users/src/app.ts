@@ -1,12 +1,12 @@
 import express from 'express';
+import {createUserRouter} from './routes/users.routes';
+import {Deps} from './types';
 
-import {registerRoutes} from './routes';
-
-export function createApp() {
+export function createApp(deps: Deps) {
   const app = express();
 
   app.use(express.json());
-  registerRoutes(app);
+  app.use('/users', createUserRouter(deps));
 
   return app;
 }

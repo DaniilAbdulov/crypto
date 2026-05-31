@@ -1,5 +1,8 @@
-import {createDb} from '../../../../packages/pg/src/knex';
+import path from 'path';
+import knex from 'knex';
 
-import knexConfig from '../../knexfile';
+const env = process.env.NODE_ENV || 'development';
 
-export const db = createDb(knexConfig);
+const knexConfig = require(path.resolve(process.cwd(), 'knexfile.js'));
+
+export const pg = knex(knexConfig[env]);

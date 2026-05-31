@@ -1,10 +1,22 @@
-import {User} from '../../../../packages/ts/types/users';
-import {db} from '../db/knex';
+import {Deps, User} from '../types';
 
-export const findById = async (uuid: string) => {
-  return db('users').where('uuid', uuid).first();
+export const create = async (
+  body: Pick<User, 'name' | 'password_hash'>,
+  {pg}: {pg: Deps['pg']},
+): Promise<Omit<User, 'password_hash' | 'created_at'>> => {
+  const [result] = await pg('users').insert(body).returning(['uuid', 'name']);
+
+  return result;
 };
 
-export const create = async (body: Pick<User, 'name' | 'password_hash'>) => {
-  return db('users').insert(body).returning('*');
+export const get = async (
+  userId: User['uuid'],
+  {pg}: {pg: Deps['pg']},
+): Promise<Pick<User, 'name' | 'uuid'>> => {
+  const user = await pg('users')
+    .select(['uuid', 'name'])
+    .where('uuid', userId)
+    .first();
+
+  return user;
 };

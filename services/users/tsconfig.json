@@ -1,10 +1,15 @@
 {
-  "extends": "../../packages/ts/tsconfig.json",
-  "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules"],
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "dist",
     "rootDir": ".",
-    "outDir": "./dist"
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "types": ["node", "jest"]
   },
-  "references": [{"path": "../../packages/pg"}]
+  "include": ["src", "tests", "knexfile.js"]
 }
