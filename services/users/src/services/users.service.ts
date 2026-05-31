@@ -1,3 +1,4 @@
+import {TOPICS} from '../events/topics';
 import * as usersRepository from '../repositories/users.repository';
 import {Deps, User} from '../types';
 
@@ -7,6 +8,10 @@ export const createUserService = (deps: Deps) => {
   return {
     createUser: async (body: Pick<User, 'name' | 'password_hash'>) => {
       const {uuid, name} = await usersRepository.create(body, deps);
+
+      deps.kafka
+        .produce(TOPICS.USER_CREATED, {uuid, name})
+        .catch((err: any) => console.error(err));
 
       return {uuid, name};
     },
