@@ -4,18 +4,28 @@ import {createApp} from '../src/app';
 import {randomUUID} from 'crypto';
 import {pg} from '../src/db/knex';
 
+const mockKafka = {
+  produce: jest.fn().mockResolvedValue(undefined),
+  connectProducer: jest.fn().mockResolvedValue(undefined),
+  subscribe: jest.fn().mockResolvedValue(undefined),
+  disconnect: jest.fn().mockResolvedValue(undefined),
+};
+
+const mockRedis = {
+  set: jest.fn().mockResolvedValue('OK'),
+  get: jest.fn().mockResolvedValue(null),
+};
+
 describe('usersTests', () => {
   const app = createApp({
     pg,
-    redis: {
-      set: jest.fn(),
-      get: jest.fn(),
-    },
-    kafka: {},
+    redis: mockRedis,
+    kafka: mockKafka,
   });
 
   afterAll(async () => {
     await pg('users').truncate();
+    await pg.destroy();
   });
 
   test('should return user by id', async () => {
@@ -28,6 +38,7 @@ describe('usersTests', () => {
 
     expect(uuid).toBe(newUserUuid);
     expect(name).toBe('John');
+    expect(mockRedis.get).toHaveBeenCalledWith(`user:${newUserUuid}`);
   });
 
   test('User not found', async () => {
@@ -52,5 +63,10 @@ describe('usersTests', () => {
     expect(res.status).toBe(200);
     expect(res.body.uuid).toBeDefined();
     expect(res.body.name).toBe('Daniil');
+
+    expect(mockKafka.produce).toHaveBeenCalledWith('user.created', {
+      uuid: expect.any(String),
+      name: 'Daniil',
+    });
   });
 });
