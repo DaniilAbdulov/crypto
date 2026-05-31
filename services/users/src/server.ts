@@ -9,6 +9,7 @@ async function bootstrap() {
   const redis = new RedisClient({
     url: process.env.REDIS_URL!,
   });
+
   await redis.connect();
 
   const deps: Deps = {

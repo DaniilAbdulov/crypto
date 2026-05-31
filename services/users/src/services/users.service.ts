@@ -25,7 +25,7 @@ export const createUserService = (deps: Deps) => {
         throw new Error('User not found');
       }
 
-      redis.set(getKey(userId), user);
+      await redis.set(getKey(userId), user);
 
       return user;
     },
