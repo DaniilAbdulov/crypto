@@ -7,7 +7,10 @@ import {pg} from '../src/db/knex';
 describe('usersTests', () => {
   const app = createApp({
     pg,
-    redis: {},
+    redis: {
+      set: jest.fn(),
+      get: jest.fn(),
+    },
     kafka: {},
   });
 

@@ -2,13 +2,18 @@ import 'dotenv/config';
 import {createApp} from './app';
 import {pg} from './db/knex';
 import {Deps} from './types';
-// import { createRedis } from './infra/redis';
+import {RedisClient} from './infra/redis';
 // import { createKafka } from './infra/kafka';
 
 async function bootstrap() {
+  const redis = new RedisClient({
+    url: process.env.REDIS_URL!,
+  });
+  await redis.connect();
+
   const deps: Deps = {
     pg,
-    redis: {},
+    redis,
     kafka: {},
   };
 
